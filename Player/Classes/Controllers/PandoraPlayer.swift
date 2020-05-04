@@ -37,6 +37,7 @@ fileprivate let defaultStartProgress: Float = 0.0
 
 fileprivate let asyncOffset: Float = 0.2
 
+@objc
 open class PandoraPlayer: UIViewController {
 	
     // MARK: Public
@@ -140,7 +141,7 @@ open class PandoraPlayer: UIViewController {
      
      - returns: Instance of PandoraPlayer with set library.
      */
-    public static func configure(withAVItem item: AVPlayerItem) -> PandoraPlayer {
+    @objc public static func configure(withAVItem item: AVPlayerItem) -> PandoraPlayer {
         return PandoraPlayer.configure(withAVItems: [item])
     }
     
@@ -243,7 +244,7 @@ open class PandoraPlayer: UIViewController {
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         
-        navigationController?.navigationBar.titleTextAttributes = [NSAttributedStringKey.foregroundColor: UIColor.white]
+        navigationController?.navigationBar.titleTextAttributes = [NSAttributedString.Key.foregroundColor: UIColor.white]
         navigationController?.navigationBar.tintColor = UIColor.white
         title = nowPlaying
     }
@@ -380,7 +381,10 @@ open class PandoraPlayer: UIViewController {
     }
 	
     fileprivate func togglePlay() {
-        guard let audioFile = player.audioFile, audioFile.url == currentSong?.url else {
+        guard
+            let audioFile = player.audioFile,
+            audioFile.url == currentSong?.url
+            else {
             reloadPlayer()
             return
         }
@@ -464,7 +468,13 @@ open class PandoraPlayer: UIViewController {
 // MARK: Helpers
     
     static func pandoraPlayerInstance() -> PandoraPlayer {
-        let storyboard = UIStoryboard(name: storyboardIdentifier, bundle: Bundle(for: PandoraPlayer.classForCoder()))
+        let b = Bundle(for: PandoraPlayer.classForCoder())
+        print("b=\(b)")
+//        guard let path = b.path(forResource: "custom", ofType: "bundle"), let bundle = Bundle(path: path) else {
+//            return PandoraPlayer()
+//        }
+//        print("bundle=\(bundle)")
+        let storyboard = UIStoryboard(name: storyboardIdentifier, bundle: b)
         return storyboard.instantiateViewController(withIdentifier: String(describing: self)) as! PandoraPlayer
     }
 }
